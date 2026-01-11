@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <title>Next WORD, please!</title>
+
+    <style>
+        :root {
+            --elf-background-color: #fafafa;
+            --elf-primary-color: #333333;
+            --elf-secondary-color: #eeeeee;
+
+            --elf-accent-light-color: #d2caef;
+            --elf-accent-color: #8f83ed;
+            --elf-accent-text-color: #6f63cf;
+
+            --elf-neutral-light-color: #b9b9b9;
+            --elf-neutral-color: #7f7f7f;
+            --elf-neutral-text-color: #333333;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --elf-background-color: #131313;
+                --elf-primary-color: #eeeeee;
+                --elf-secondary-color: #333333;
+
+                --elf-accent-light-color: #b0e9d5;
+                --elf-accent-color: #00a97d;
+                --elf-accent-text-color: #1a9473;
+            }
+        }
+
+        body * {
+            font-family: "Quicksand", sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            padding: 20px;
+            margin: 0;
+            color: var(--elf-primary-color);
+            background-color: var(--elf-background-color);
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--elf-accent-text-color);
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background-color: var(--elf-secondary-color);
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .numbers {
+            display: none;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            max-width: 300px;
+        }
+
+        .number {
+            border-radius: 6px;
+            padding: 4px 8px;
+            background-color: var(--elf-accent-light-color);
+            font-weight: 500;
+            color: var(--elf-accent-text-color);
+            font-size: 28px;
+        }
+
+        .button {
+            --elf-btn-background: var(--elf-accent-light-color);
+            --elf-btn-shadow: var(--elf-accent-color);
+            --elf-btn-color: var(--elf-accent-text-color);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            width: 100%;
+            padding: 12px 32px;
+            gap: 8px;
+            background: var(--elf-btn-background);
+            color: var(--elf-btn-color);
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            box-shadow: 4px 4px 1px 0px var(--elf-btn-shadow);
+            transition: all 0.2s;
+            outline: none;
+            text-decoration: none;
+            user-select: none;
+        }
+
+        .button:hover,
+        .button:focus {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 1px 0px var(--elf-btn-shadow);
+        }
+
+        .button:active {
+            transform: translate(3px, 3px);
+            box-shadow: none;
+        }
+
+        label {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 20px;
+            position: relative;
+        }
+
+        .label-text {
+            position: absolute;
+            left: 10px;
+            top: -5px;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 6px;
+            color: var(--elf-neutral-text-color);
+            background: var(--elf-neutral-light-color);
+        }
+
+        input {
+            flex: 1;
+            min-width: 160px;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            font-size: 16px;
+            text-align: center;
+            outline-color: var(--elf-accent-light-color);
+            font-weight: 600;
+            background: #ffffff;
+            color: var(--elf-neutral-text-color);
+        }
+
+        .error {
+            display: none;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="viewTitle" class="title">Next WORD, please!</div>
+
+    <div class="menu">
+        <div id="gameTab" class="button active">Game</div>
+        <div id="infoTab" class="button">Info</div>
+        <div id="settingsTab" class="button">Settings</div>
+    </div>
+
+    <div id="list"></div>
+
+    <!-- Input + Add -->
+    <div id="mainControls">
+        <span id="lastAdded"></span>
+        <input id="newItem" type="text" />
+        <div id="addDiv" class="button">Add</div>
+        <span id="errorMsg">Duplicate word!</span>
+    </div>
+
+    <!-- Menu -->
+    <div id="menuControls" class="hidden">
+        <div id="importDiv" class="button">Import TXT</div>
+        <div id="exportDiv" class="button">Export TXT</div>
+        <div id="resetDiv" class="button">Reset</div>
+        <input id="fileInput" type="file" accept=".txt" hidden />
+    </div>
+
+
+    <!-- <div id="result" class="numbers">
+    </div>
+
+    <div class="form">
+        <label>
+            <span class="label-text">Min</span>
+            <input type="number" id="min" value="1">
+        </label>
+        <label>
+            <span class="label-text">Max</span>
+            <input type="number" id="max" value="100">
+        </label>
+        <label>
+            <span class="label-text">Num</span>
+            <input type="number" id="num" value="1" min="1">
+        </label>
+        <div id="error" class="error"></div>
+        <div class="button" onclick="generateRandomNumbers()">Generate Numbers</div>
+    </div> -->
+    <!-- Info placeholder -->
+    <div id="infoContent" class="hidden">
+        About
+        <div class="author">
+            <span>Created by <a href="https://anastasiaelf.com/" target="_blank">AnastasiaElf</a></span>
+        </div>
+    </div>
+
+
+    <script>
+        const STORAGE_KEY = "string_list_app";
+        let items = [];
+        let filterText = "";
+        let currentView = 'game';
+
+        const listEl = document.getElementById("list");
+        const inputEl = document.getElementById("newItem");
+        const fileInput = document.getElementById("fileInput");
+        const lastAddedEl = document.getElementById("lastAdded");
+        const errorMsg = document.getElementById("errorMsg");
+
+        const mainControls = document.getElementById("mainControls");
+        const menuControls = document.getElementById("menuControls");
+        const infoContent = document.getElementById("infoContent");
+        const viewTitle = document.getElementById("viewTitle");
+
+        // Menu tabs
+        const gameTab = document.getElementById("gameTab");
+        const infoTab = document.getElementById("infoTab");
+        const settingsTab = document.getElementById("settingsTab");
+
+        function save() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+            updateLastAdded();
+        }
+
+        function load() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) items = JSON.parse(data);
+            updateLastAdded();
+        }
+
+        function updateLastAdded() {
+            lastAddedEl.textContent = items.length ? `(Last: ${items[items.length - 1]})` : '';
+        }
+
+        function render() {
+            listEl.innerHTML = "";
+
+            const visibleItems = items.filter(item =>
+                item.toLowerCase().includes(filterText)
+            );
+
+            visibleItems.forEach((str) => {
+                const realIndex = items.indexOf(str);
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "item";
+
+                const textDiv = document.createElement("div");
+                textDiv.textContent = str;
+                itemDiv.appendChild(textDiv);
+
+                // Show delete X only in settings
+                if (currentView === 'settings') {
+                    const del = document.createElement("div");
+                    del.className = "delete";
+                    del.textContent = "X";
+                    del.onclick = () => {
+                        if (!confirm(`Delete "${str}"?`)) return;
+                        items.splice(realIndex, 1);
+                        save();
+                        render();
+                    };
+                    itemDiv.appendChild(del);
+                }
+
+                listEl.appendChild(itemDiv);
+            });
+        }
+
+        function addItem(value) {
+            const normalized = value.toLowerCase();
+            const exists = items.some(i => i.toLowerCase() === normalized);
+            if (exists) {
+                errorMsg.style.display = "inline";
+                return;
+            }
+
+            errorMsg.style.display = "none";
+            items.push(value);
+            save();
+            filterText = "";
+            inputEl.value = "";
+            render();
+        }
+
+        // Switch views
+        function switchView(view) {
+            currentView = view;
+            viewTitle.textContent = view.charAt(0).toUpperCase() + view.slice(1);
+
+            mainControls.classList.toggle("hidden", view !== 'game');
+            menuControls.classList.toggle("hidden", view !== 'settings');
+            infoContent.classList.toggle("hidden", view !== 'info');
+            listEl.classList.toggle("hidden", view === 'info'); // <-- hide list on info
+
+            errorMsg.style.display = "none";
+            render();
+
+            // Update tab active style
+            gameTab.classList.toggle("active", view === 'game');
+            infoTab.classList.toggle("active", view === 'info');
+            settingsTab.classList.toggle("active", view === 'settings');
+        }
+
+        // Tab click handlers
+        gameTab.onclick = () => switchView('game');
+        infoTab.onclick = () => switchView('info');
+        settingsTab.onclick = () => switchView('settings');
+
+        // Input handlers
+        document.getElementById("addDiv").onclick = () => {
+            const value = inputEl.value.trim();
+            if (!value) return;
+            addItem(value);
+        };
+
+        inputEl.oninput = () => {
+            filterText = inputEl.value.trim().toLowerCase();
+            errorMsg.style.display = "none";
+            render();
+        };
+
+        // Settings buttons
+        document.getElementById("importDiv").onclick = () => fileInput.click();
+        fileInput.onchange = () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                const lines = reader.result
+                    .split(/\r?\n/)
+                    .map(l => l.trim())
+                    .filter(l => l);
+
+                // Replace the old list entirely
+                items = lines;
+
+                save();
+                render();
+            };
+            reader.readAsText(file);
+            fileInput.value = "";
+        };
+
+        document.getElementById("exportDiv").onclick = () => {
+            const blob = new Blob([items.join("\n")], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "list.txt";
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+
+        document.getElementById("resetDiv").onclick = () => {
+            if (!confirm("This will delete everything. Continue?")) return;
+            items = [];
+            localStorage.removeItem(STORAGE_KEY);
+            errorMsg.style.display = "none";
+            updateLastAdded();
+            render();
+        };
+
+        // Init
+        load();
+        switchView('game');
+    </script>
+
+</body>
+
+</html>
