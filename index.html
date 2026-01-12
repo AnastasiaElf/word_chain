@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <title>Next WORD, please!</title>
+    <title>Next WORD, Please!</title>
 
     <style>
         :root {
@@ -37,6 +37,11 @@
             }
         }
 
+        html {
+            height: 100%;
+            margin: 0;
+        }
+
         body * {
             font-family: "Quicksand", sans-serif;
             box-sizing: border-box;
@@ -46,11 +51,116 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 18px;
-            padding: 20px;
+            /* gap: 18px; */
             margin: 0;
+            height: 100vh;
             color: var(--elf-primary-color);
             background-color: var(--elf-background-color);
+        }
+
+        .header {
+            flex: 0 0 auto;
+            padding: 20px;
+        }
+
+        .content {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--elf-secondary-color);
+            padding: 16px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .footer {
+            flex: 0 0 auto;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .menu {
+            display: flex;
+            gap: 18px;
+        }
+
+        .list {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .item {
+            display: flex;
+            gap: 10px;
+        }
+
+        .item-text {
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .item:nth-child(odd)>.item-text {
+            background-color: #d2caef;
+            color: #6f63cf;
+        }
+
+        .item:nth-child(even)>.item-text {
+            background-color: #b0e9d5;
+            color: #1a9473;
+        }
+
+        .delete {
+            padding: 4px 8px;
+            background-color: var(--elf-neutral-light-color);
+            border-radius: 6px;
+            line-height: 10px;
+            color: var(--elf-neutral-text-color);
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .delete:hover {
+            background-color: var(--elf-neutral-color);
+        }
+
+        .last-item {
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .last-item.odd {
+            background-color: #d2caef;
+            color: #6f63cf;
+        }
+
+        .last-item.even {
+            background-color: #b0e9d5;
+            color: #1a9473;
+        }
+
+        .main-controls {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .settings-controls {
+            display: flex;
+            gap: 10px;
         }
 
         a {
@@ -64,34 +174,6 @@
             text-align: center;
         }
 
-        .form {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            background-color: var(--elf-secondary-color);
-            padding: 30px;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 350px;
-        }
-
-        .numbers {
-            display: none;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 16px;
-            max-width: 300px;
-        }
-
-        .number {
-            border-radius: 6px;
-            padding: 4px 8px;
-            background-color: var(--elf-accent-light-color);
-            font-weight: 500;
-            color: var(--elf-accent-text-color);
-            font-size: 28px;
-        }
-
         .button {
             --elf-btn-background: var(--elf-accent-light-color);
             --elf-btn-shadow: var(--elf-accent-color);
@@ -102,7 +184,7 @@
             justify-content: center;
             cursor: pointer;
             width: 100%;
-            padding: 12px 32px;
+            padding: 10px 18px;
             gap: 8px;
             background: var(--elf-btn-background);
             color: var(--elf-btn-color);
@@ -114,6 +196,7 @@
             outline: none;
             text-decoration: none;
             user-select: none;
+            text-align: center;
         }
 
         .button:hover,
@@ -125,6 +208,12 @@
         .button:active {
             transform: translate(3px, 3px);
             box-shadow: none;
+        }
+
+        .button.neutral {
+            --elf-btn-background: var(--elf-neutral-light-color);
+            --elf-btn-shadow: var(--elf-neutral-color);
+            --elf-btn-color: var(--elf-neutral-text-color);
         }
 
         label {
@@ -150,6 +239,7 @@
         input {
             flex: 1;
             min-width: 160px;
+            width: 100%;
             padding: 10px;
             margin: 5px 0;
             border: 1px solid #cccccc;
@@ -175,60 +265,44 @@
 </head>
 
 <body>
-    <div id="viewTitle" class="title">Next WORD, please!</div>
-
-    <div class="menu">
-        <div id="gameTab" class="button active">Game</div>
-        <div id="infoTab" class="button">Info</div>
-        <div id="settingsTab" class="button">Settings</div>
-    </div>
-
-    <div id="list"></div>
-
-    <!-- Input + Add -->
-    <div id="mainControls">
-        <span id="lastAdded"></span>
-        <input id="newItem" type="text" />
-        <div id="addDiv" class="button">Add</div>
-        <span id="errorMsg">Duplicate word!</span>
-    </div>
-
-    <!-- Menu -->
-    <div id="menuControls" class="hidden">
-        <div id="importDiv" class="button">Import TXT</div>
-        <div id="exportDiv" class="button">Export TXT</div>
-        <div id="resetDiv" class="button">Reset</div>
-        <input id="fileInput" type="file" accept=".txt" hidden />
-    </div>
-
-
-    <!-- <div id="result" class="numbers">
-    </div>
-
-    <div class="form">
-        <label>
-            <span class="label-text">Min</span>
-            <input type="number" id="min" value="1">
-        </label>
-        <label>
-            <span class="label-text">Max</span>
-            <input type="number" id="max" value="100">
-        </label>
-        <label>
-            <span class="label-text">Num</span>
-            <input type="number" id="num" value="1" min="1">
-        </label>
-        <div id="error" class="error"></div>
-        <div class="button" onclick="generateRandomNumbers()">Generate Numbers</div>
-    </div> -->
-    <!-- Info placeholder -->
-    <div id="infoContent" class="hidden">
-        About
-        <div class="author">
-            <span>Created by <a href="https://anastasiaelf.com/" target="_blank">AnastasiaElf</a></span>
+    <div class="header">
+        <!-- <div id="viewTitle" class="title">Next WORD, Please!</div> -->
+        <div class="menu">
+            <div id="gameTab" class="button neutral active">Game</div>
+            <div id="infoTab" class="button neutral">Info</div>
+            <div id="settingsTab" class="button neutral">Settings</div>
         </div>
     </div>
 
+    <div class="content">
+        <div id="list" class="list"></div>
+
+        <div id="infoContent" class="hidden">
+            <div class="author">
+                <span>Created by <a href="https://anastasiaelf.com/" target="_blank">AnastasiaElf</a></span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+
+        <!-- Input + Add -->
+        <div id="mainControls" class="main-controls">
+            <div id="lastAdded" class="last-item"></div>
+            <input id="newItem" type="text" />
+            <div id="addDiv" class="button">Add</div>
+            <div id="errorMsg">Duplicate word!</div>
+        </div>
+
+        <!-- Menu -->
+        <div id="settingsControls" class="settings-controls hidden">
+            <div id="importDiv" class="button">Import TXT</div>
+            <div id="exportDiv" class="button">Export TXT</div>
+            <div id="resetDiv" class="button">Reset</div>
+            <input id="fileInput" type="file" accept=".txt" hidden />
+        </div>
+    </div>
 
     <script>
         const STORAGE_KEY = "string_list_app";
@@ -243,9 +317,9 @@
         const errorMsg = document.getElementById("errorMsg");
 
         const mainControls = document.getElementById("mainControls");
-        const menuControls = document.getElementById("menuControls");
+        const settingsControls = document.getElementById("settingsControls");
         const infoContent = document.getElementById("infoContent");
-        const viewTitle = document.getElementById("viewTitle");
+        // const viewTitle = document.getElementById("viewTitle");
 
         // Menu tabs
         const gameTab = document.getElementById("gameTab");
@@ -264,7 +338,9 @@
         }
 
         function updateLastAdded() {
-            lastAddedEl.textContent = items.length ? `(Last: ${items[items.length - 1]})` : '';
+            lastAddedEl.classList.remove('odd', 'even');
+            lastAddedEl.classList.add(items.length % 2 === 0 ? 'even' : 'odd');
+            lastAddedEl.textContent = items.length ? `${items[items.length - 1]} ↴` : '';
         }
 
         function render() {
@@ -280,6 +356,7 @@
                 itemDiv.className = "item";
 
                 const textDiv = document.createElement("div");
+                textDiv.className = "item-text";
                 textDiv.textContent = str;
                 itemDiv.appendChild(textDiv);
 
@@ -287,7 +364,7 @@
                 if (currentView === 'settings') {
                     const del = document.createElement("div");
                     del.className = "delete";
-                    del.textContent = "X";
+                    del.textContent = "×";
                     del.onclick = () => {
                         if (!confirm(`Delete "${str}"?`)) return;
                         items.splice(realIndex, 1);
@@ -320,10 +397,10 @@
         // Switch views
         function switchView(view) {
             currentView = view;
-            viewTitle.textContent = view.charAt(0).toUpperCase() + view.slice(1);
+            // viewTitle.textContent = view.charAt(0).toUpperCase() + view.slice(1);
 
             mainControls.classList.toggle("hidden", view !== 'game');
-            menuControls.classList.toggle("hidden", view !== 'settings');
+            settingsControls.classList.toggle("hidden", view !== 'settings');
             infoContent.classList.toggle("hidden", view !== 'info');
             listEl.classList.toggle("hidden", view === 'info'); // <-- hide list on info
 
