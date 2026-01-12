@@ -289,7 +289,7 @@
 
         <!-- Input + Add -->
         <div id="mainControls" class="main-controls">
-            <div id="lastAdded" class="last-item"></div>
+            <div id="lastAdded" class="last-item">First WORD, Please!</div>
             <input id="newItem" type="text" />
             <div id="addDiv" class="button">Add</div>
             <div id="errorMsg">Duplicate word!</div>
@@ -338,9 +338,16 @@
         }
 
         function updateLastAdded() {
-            lastAddedEl.classList.remove('odd', 'even');
-            lastAddedEl.classList.add(items.length % 2 === 0 ? 'even' : 'odd');
-            lastAddedEl.textContent = items.length ? `${items[items.length - 1]} ↴` : '';
+            if (items.length === 0) {
+                lastAddedEl.classList.remove('odd', 'even');
+                lastAddedEl.classList.add('odd');
+                lastAddedEl.textContent = "First WORD, Please!";
+
+            } else {
+                lastAddedEl.classList.remove('odd', 'even');
+                lastAddedEl.classList.add(items.length % 2 === 0 ? 'even' : 'odd');
+                lastAddedEl.textContent = items.length ? `${items[items.length - 1]} ↴` : '';
+            }
         }
 
         function render() {
